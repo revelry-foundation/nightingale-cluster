@@ -15,5 +15,5 @@ spec:
   values:
     git:
       url: "ssh://git@github.com/revelry-foundation/nightingale-cluster"
-      branch: nightingale
+      branch: master
       secretName: flux-git-deploy
