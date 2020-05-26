@@ -1,0 +1,17 @@
+---
+# Source: moondog/templates/harbor/01-redis.yaml
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: harbor-redis
+  namespace: md-harbor
+spec:
+  timeout: 1600
+  releaseName: md-harbor-redis
+  chart:
+    repository: https://dandydeveloper.github.io/charts
+    name: redis-ha
+    version: 4.5.3
+  values:
+    haproxy:
+      enabled: true

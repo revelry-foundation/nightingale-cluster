@@ -1,0 +1,56 @@
+---
+# Source: moondog/templates/cert-manager/cert-manager.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: md-cert-manager
+---
+# Source: moondog/templates/cert-manager/cert-manager.yaml
+apiVersion: cert-manager.io/v1alpha2
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt
+  namespace: md-cert-manager
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: "foundation@revelry.co"
+    privateKeySecretRef:
+      name: letsencrypt
+    solvers:
+      - http01:
+          ingress:
+            class: nginx
+---
+# Source: moondog/templates/cert-manager/cert-manager.yaml
+apiVersion: cert-manager.io/v1alpha2
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-staging
+  namespace: md-cert-manager
+spec:
+  acme:
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    email: "foundation@revelry.co"
+    privateKeySecretRef:
+      name: letsencrypt-staging
+    solvers:
+      - http01:
+          ingress:
+            class: nginx
+---
+# Source: moondog/templates/cert-manager/cert-manager.yaml
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: cert-manager
+  namespace: md-cert-manager
+spec:
+  timeout: 1600
+  releaseName: md-cert-manager
+  chart:
+    repository: https://charts.jetstack.io
+    name: cert-manager
+    version: v0.13.0
+  values:
+    replicaCount: 1

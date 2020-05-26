@@ -1,0 +1,94 @@
+---
+# Source: moondog/templates/user-permissions/user-permissions.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: "md-user-permissions"
+---
+# Source: moondog/templates/user-permissions/user-permissions.yaml
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: user-permissions
+  namespace: "md-user-permissions"
+spec:
+  timeout: 1600
+  releaseName: md-cert-manager
+  chart:
+    repository: https://revelrylabs.github.io/helm-charts
+    name: user-permissions
+    version: 0.1.0
+  values:
+    roleDefinitions: 
+      md-read-all-except-secrets:
+      - apiGroups:
+        - ""
+        - apps
+        - autoscaling
+        - batch
+        - extensions
+        - policy
+        - rbac.authorization.k8s.io
+        - storage.k8s.io
+        resources:
+        - componentstatuses
+        - configmaps
+        - cronjobs
+        - daemonsets
+        - deployments
+        - events
+        - endpoints
+        - horizontalpodautoscalers
+        - ingress
+        - ingresses
+        - jobs
+        - limitranges
+        - namespaces
+        - nodes
+        - pods
+        - pods/log
+        - pods/exec
+        - persistentvolumes
+        - persistentvolumeclaims
+        - resourcequotas
+        - replicasets
+        - replicationcontrollers
+        - serviceaccounts
+        - services
+        - services/proxy
+        - statefulsets
+        - storageclasses
+        - clusterroles
+        - roles
+        verbs:
+        - get
+        - watch
+        - list
+      - nonResourceURLs:
+        - '*'
+        verbs:
+        - get
+        - watch
+        - list
+      md-read-write-all:
+      - apiGroups:
+        - '*'
+        resources:
+        - '*'
+        verbs:
+        - '*'
+      - nonResourceURLs:
+        - '*'
+        verbs:
+        - '*'
+    bindings:
+    - group: "revelry-foundation:cluster-administrators"
+      bindTo: 
+      - namespace: '*'
+        roles:
+        - md-read-write-all
+    - group: "revelry-foundation:cluster-users"
+      bindTo: 
+      - namespace: '*'
+        roles:
+        - md-read-all-except-secrets

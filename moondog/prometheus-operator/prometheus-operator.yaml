@@ -1,0 +1,114 @@
+---
+# Source: moondog/templates/prometheus-operator/prometheus-operator.yaml
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: prometheus-operator
+  namespace: md-prometheus-operator
+spec:
+  timeout: 1600
+  releaseName: md-prometheus-operator
+  chart:
+    repository: https://kubernetes-charts.storage.googleapis.com/
+    name: prometheus-operator
+    version: 8.12.13
+  valuesFrom:
+    - secretKeyRef:
+        name: values-yaml
+  values:
+    prometheusOperator:
+      createCustomResource: false # https://github.com/helm/charts/tree/master/stable/prometheus-operator#helm-fails-to-create-crds
+    grafana:
+      rbac:
+        pspUseAppArmor: false
+      grafana.ini:
+        log:
+          level: debug
+        server:
+          domain: grafana.nightingale.revelry.org
+          root_url: https://grafana.nightingale.revelry.org/
+        auth.generic_oauth:
+          enabled: true
+          client_id: "grafana"
+          scopes: "openid profile email offline_access groups audience:server:client_id:dex"
+          auth_url: https://dex.nightingale.revelry.org/auth
+          token_url: http://md-dex.md-dex.svc:32000/token
+          api_url:
+      ingress:
+        enabled: true
+        annotations:
+          kubernetes.io/ingress.class: nginx
+          cert-manager.io/cluster-issuer: "letsencrypt"
+        hosts:
+          - grafana.nightingale.revelry.org
+        path: /
+        tls:
+          - secretName: grafana-tls
+            hosts:
+              - grafana.nightingale.revelry.org
+      persistence:
+        enabled: true
+        type: pvc
+      additionalDataSources:
+        - name: loki
+          type: loki
+          access: proxy
+          url: http://md-loki-stack.md-loki-stack.svc:3100
+          jsonData:
+            maxLines: 1000
+
+    alertmanager:
+      ingress:
+        enabled: true
+        annotations:
+          kubernetes.io/ingress.class: nginx
+          cert-manager.io/cluster-issuer: "letsencrypt"
+          nginx.ingress.kubernetes.io/auth-url: "https://oauth2-proxy.nightingale.revelry.org/oauth2/auth"
+          nginx.ingress.kubernetes.io/auth-signin: "https://oauth2-proxy.nightingale.revelry.org/oauth2/start?rd=$scheme://$best_http_host$request_uri"
+        hosts:
+          - alertmanager.nightingale.revelry.org
+        paths:
+          - /
+        tls:
+          - secretName: alertmanager-tls
+            hosts:
+              - alertmanager.nightingale.revelry.org
+      alertmanagerSpec:
+        storage:
+          volumeClaimTemplate:
+            spec:
+              resources:
+                requests:
+                  storage: 20Gi
+    prometheus:
+      prometheusSpec:
+        secrets:
+          - etcd-client
+        storageSpec:
+          volumeClaimTemplate:
+            spec:
+              resources:
+                requests:
+                  storage: 20Gi
+      ingress:
+        enabled: true
+        annotations:
+          kubernetes.io/ingress.class: nginx
+          cert-manager.io/cluster-issuer: "letsencrypt"
+          nginx.ingress.kubernetes.io/auth-url: "https://oauth2-proxy.nightingale.revelry.org/oauth2/auth"
+          nginx.ingress.kubernetes.io/auth-signin: "https://oauth2-proxy.nightingale.revelry.org/oauth2/start?rd=$scheme://$best_http_host$request_uri"
+        hosts:
+          - prometheus.nightingale.revelry.org
+        paths:
+          - /
+        tls:
+          - secretName: prometheus-tls
+            hosts:
+              - prometheus.nightingale.revelry.org
+    kubeEtcd:
+      serviceMonitor:
+        scheme: https
+        insecureSkipVerify: true
+        caFile: /etc/prometheus/secrets/etcd-client/ca.crt
+        certFile: /etc/prometheus/secrets/etcd-client/healthcheck-client.crt
+        keyFile: /etc/prometheus/secrets/etcd-client/healthcheck-client.key

@@ -1,0 +1,56 @@
+---
+# Source: moondog/templates/aws-ebs/aws-ebs.yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: aws-ebs-gp2
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "true"
+parameters:
+  type: gp2
+  encrypted: "true"
+provisioner: kubernetes.io/aws-ebs
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+---
+# Source: moondog/templates/aws-ebs/aws-ebs.yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: aws-ebs-io1
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "false"
+parameters:
+  type: io1
+  encrypted: "true"
+provisioner: kubernetes.io/aws-ebs
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+---
+# Source: moondog/templates/aws-ebs/aws-ebs.yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: aws-ebs-st1
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "false"
+parameters:
+  type: st1
+  encrypted: "true"
+provisioner: kubernetes.io/aws-ebs
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+---
+# Source: moondog/templates/aws-ebs/aws-ebs.yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: aws-ebs-sc1
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "false"
+parameters:
+  type: sc1
+  encrypted: "true"
+provisioner: kubernetes.io/aws-ebs
+reclaimPolicy: Delete
+volumeBindingMode: Immediate

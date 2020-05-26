@@ -1,0 +1,6 @@
+---
+# Source: moondog/templates/oauth2-proxy/00-namespace.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: md-oauth2-proxy

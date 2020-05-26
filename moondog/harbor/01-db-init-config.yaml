@@ -1,0 +1,15 @@
+---
+# Source: moondog/templates/harbor/01-db-init-config.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: harbor-init-sql
+  namespace: md-harbor
+data:
+  harbor.sql: |
+    CREATE DATABASE registry;
+    CREATE DATABASE harbor;
+    CREATE DATABASE core;
+    CREATE DATABASE clair;
+    CREATE DATABASE notary_server;
+    CREATE DATABASE notary_signer;
