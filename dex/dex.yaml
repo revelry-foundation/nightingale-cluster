@@ -1,0 +1,37 @@
+---
+# Source: moondog/templates/dex/dex.yaml
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: dex
+  namespace: md-dex
+spec:
+  timeout: 1600
+  releaseName: md-dex
+  chart:
+    repository: https://kubernetes-charts.storage.googleapis.com/
+    name: dex
+    version: 2.10.0
+  valuesFrom:
+    - secretKeyRef:
+        name: values-yaml
+  values:
+    grpc: false
+    ports:
+      web:
+        nodePort: 32000
+        servicePort: 32000
+    config:
+      issuer: https://dex.nightingale.revelry.org
+      enablePasswordDB: false
+    ingress:
+      enabled: true
+      annotations:
+        kubernetes.io/ingress.class: nginx
+        cert-manager.io/cluster-issuer: "letsencrypt"
+      hosts:
+        - dex.nightingale.revelry.org
+      tls:
+        - secretName: dex-tls
+          hosts:
+            - dex.nightingale.revelry.org

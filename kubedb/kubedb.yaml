@@ -1,0 +1,40 @@
+---
+# Source: moondog/templates/kubedb/kubedb.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: md-kubedb
+---
+# Source: moondog/templates/kubedb/kubedb.yaml
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: kubedb
+  namespace: md-kubedb
+spec:
+  timeout: 1600
+  releaseName: md-kubedb
+  chart:
+    repository: https://charts.appscode.com/stable/
+    name: kubedb
+    version: v0.12.0
+  values:
+    apiserver:
+      healthcheck:
+        enabled: false 
+    enableAnalytics: false
+---
+# Source: moondog/templates/kubedb/kubedb.yaml
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: kubedb-catalog
+  namespace: md-kubedb
+spec:
+  timeout: 1600
+  releaseName: md-kubedb-catalog
+  chart:
+    repository: https://charts.appscode.com/stable/
+    name: kubedb-catalog
+    version: v0.12.0
+  values: {}

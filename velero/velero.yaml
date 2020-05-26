@@ -1,0 +1,54 @@
+---
+# Source: moondog/templates/velero/velero.yaml
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: md-velero
+  namespace: md-velero
+spec:
+  timeout: 1600
+  releaseName: md-velero
+  chart:
+    repository: https://vmware-tanzu.github.io/helm-charts
+    name: velero
+    version: 2.9.1
+  values:
+    initContainers:
+      - name: velero-plugin-for-aws
+        image: velero/velero-plugin-for-aws:v1.0.1
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+          - mountPath: /target
+            name: plugins
+    configuration:
+      provider: aws
+      backupStorageLocation:
+        name: aws
+        bucket: nightingale-velero-backups-revelry
+        config: 
+          region: us-east-2
+      volumeSnapshotLocation: 
+        name: aws
+        config: 
+          region: us-east-2
+    credentials: 
+      existingSecret: velero-aws-credentials 
+    schedules: 
+      hourly:
+        schedule: "0 */3 * * *"
+        template:
+          ttl: "24h0m0s"
+          includedNamespaces:
+          - '*'
+      daily:
+        schedule: "0 0 * * *"
+        template:
+          ttl: "168h0m0s"
+          includedNamespaces:
+          - '*'
+      monthly:
+        schedule: "0 1 1 * *"
+        template:
+          ttl: "4320h0m0s"
+          includedNamespaces:
+          - '*'

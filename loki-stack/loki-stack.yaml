@@ -1,0 +1,38 @@
+---
+# Source: moondog/templates/loki-stack/loki-stack.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: md-loki-stack
+---
+# Source: moondog/templates/loki-stack/loki-stack.yaml
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: loki-stack
+  namespace: md-loki-stack
+spec:
+  timeout: 1600
+  releaseName: md-loki-stack
+  chart:
+    repository: https://grafana.github.io/loki/charts
+    name: loki-stack
+    version: 0.33.1
+  values:
+    loki:
+    promtail:
+      loki:
+      volumes:
+        - name: docker
+          hostPath:
+            path: "/var/lib/docker/containers"
+        - name: pods
+          hostPath:
+            path: "/var/log/pods"
+      volumeMounts:
+        - name: docker
+          mountPath: /var/lib/docker/containers
+          readOnly: true
+        - name: pods
+          mountPath: /var/log/pods
+          readOnly: true

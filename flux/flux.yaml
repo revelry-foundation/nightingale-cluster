@@ -1,0 +1,19 @@
+---
+# Source: moondog/templates/flux/flux.yaml
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: flux
+  namespace: md-flux
+spec:
+  timeout: 1600
+  releaseName: md-flux
+  chart:
+    repository: https://charts.fluxcd.io/
+    name: flux
+    version: 1.3.0
+  values:
+    git:
+      url: "ssh://git@github.com/revelry-foundation/nightingale-cluster"
+      branch: nightingale
+      secretName: flux-git-deploy

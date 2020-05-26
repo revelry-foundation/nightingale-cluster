@@ -1,0 +1,52 @@
+---
+# Source: moondog/templates/gangway/gangway.yaml
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: gangway
+  namespace: md-gangway
+spec:
+  timeout: 1600
+  releaseName: md-gangway
+  chart:
+    repository: https://kubernetes-charts.storage.googleapis.com/
+    name: gangway
+    version: 0.4.0
+  valuesFrom:
+    - secretKeyRef:
+        name: values-yaml
+  values:
+    extraVolumes:
+      - name: ca-crt
+        configMap:
+          name: ca-crt
+    extraVolumeMounts:
+      - name: ca-crt
+        mountPath: /etc/ca
+        readOnly: true
+    gangway:
+      apiServerURL: "https://nightingale.nightingale.revelry.org:6443"
+      clusterName: nightingale
+      clientID: "dex"
+      authorizeURL: https://dex.nightingale.revelry.org/auth
+      tokenURL: https://dex.nightingale.revelry.org/token
+      audience: https://dex.nightingale.revelry.org/userinfo
+      redirectURL: https://gangway.nightingale.revelry.org/callback
+      trustedCAPath: /etc/ca/ca.crt
+      scopes:
+        - openid
+        - profile
+        - email
+        - offline_access
+        - groups
+    ingress:
+      enabled: true
+      annotations:
+        kubernetes.io/ingress.class: nginx
+        cert-manager.io/cluster-issuer: "letsencrypt"
+      hosts:
+        - gangway.nightingale.revelry.org
+      tls:
+        - secretName: gangway-tls
+          hosts:
+            - gangway.nightingale.revelry.org
