@@ -48,8 +48,6 @@ spec:
         - configMapRef:
             name: nightingale-staging-env-config
         - secretRef:
-            name: nightingale-staging-env-secret
-        - secretRef:
             # This secret is created by KubeDB along with the db instance
             # The secret name follows the pattern {Postgres resource name}-auth
             name: nightingale-staging-database-auth
