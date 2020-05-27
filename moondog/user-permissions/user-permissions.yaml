@@ -92,3 +92,13 @@ spec:
       - namespace: '*'
         roles:
         - md-read-all-except-secrets
+    - group: "revelrylabs:k8s-admins"
+      bindTo: 
+      - namespace: '*'
+        roles:
+        - md-read-write-all
+    - group: "revelrylabs:team-revelry"
+      bindTo: 
+      - namespace: '*'
+        roles:
+        - md-read-all-except-secrets
