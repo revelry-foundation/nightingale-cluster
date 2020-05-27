@@ -115,7 +115,7 @@ metadata:
     certmanager.k8s.io/cluster-issuer: letsencrypt-production
 spec:
   rules:
-  - host: nightingale-staging.revelry-prod.revelry.net
+  - host: nightingale-server-staging.nightingale.revelry.org
     http:
       paths:
       - path: /
@@ -124,7 +124,7 @@ spec:
           servicePort: 80
   tls:
   - hosts:
-    - nightingale-staging.revelry-prod.revelry.net
+    - nightingale-server-staging.nightingale.revelry.org
     secretName: nightingale-staging-cert
 ---
 apiVersion: kubedb.com/v1alpha1
@@ -153,7 +153,7 @@ spec:
 apiVersion: v1
 data:
   # used for url helpers and socket security checks
-  APP_DOMAIN: nightingale-staging.revelry-prod.revelry.net
+  APP_DOMAIN: nightingale-server-staging.nightingale.revelry.org
   # should match the 'app:' label in the deployment
   APP_NAME: nightingale-staging
   POSTGRES_HOSTNAME: nightingale-staging-database
