@@ -51,6 +51,8 @@ spec:
             # This secret is created by KubeDB along with the db instance
             # The secret name follows the pattern {Postgres resource name}-auth
             name: nightingale-database-auth
+        - secretRef:
+            name: nightingale-env-secret
         env:
         # distributed elixir via libcluster
         - name: CLUSTER_ENABLED
@@ -72,6 +74,8 @@ spec:
             # This secret is created by KubeDB along with the db instance
             # The secret name follows the pattern {Postgres resource name}-auth
             name: nightingale-database-auth
+        - secretRef:
+            name: nightingale-env-secret
 ---
 apiVersion: v1
 kind: Service
@@ -191,4 +195,21 @@ spec:
       name: kube-pull
       namespace: nightingale
     type: kubernetes.io/dockerconfigjson
+status: {}
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  creationTimestamp: null
+  name: nightingale-env-secret
+  namespace: nightingale
+spec:
+  encryptedData:
+    SECRET_KEY_BASE: AgCak5F8L/D+X+4/1+HmdvcDebcIkPwKvYEmVCv+QCHfvGDLEnPWZstCeso4MiPfd6Yy4pGbevZLDf483pkqJXr5VWrVJADUM5I7qjyn+gNWM11nZNvd+LbJBPqxo3csnme/G/0+vqwmEtjZWHSodwgpg/QUymsTl0Lhtw1X5svafEVD+tyk75eA/HkOngm7H/GEyrttkCYczIjumaK7GwOF1MbRQB2WBed1Dhjku9WF4koHmx8CpfwAa3SXDcXjHpvtUqJIbkzUDuDSIYrNWcC+PwAefVAQtoJCQKOEsvRzAwtuv5AWXofJed26dcaLFTD6/JnT1dHORHlA23xGz9ToGJRChBrLikj14uflXLk0Y1BtPv8ctT9Y3FMR6GBgES2ojvx7HPZjjFIUauNel2bmq9NlycuFc5IjAUtMY+tW81W3/kn+7Z18gFFwXjOYmksX+lypVteJWdt7QDnnjP92WvmAlILi1tHCNiFTXutDBntv4DpkB/8zObG/k8YIkLIDx43dgezDL2EnzDwzF8ZooGkzCobXWk1NUKg/WTyWeyB4tuHK90vd/AhZvYKcawf/Y3arPFrwLl9zvVBQEmcEAGPBBewoHaveHYF67BMVqP4l28WfVZnHbOl7kXRUuWBo7gknY8T5y8V+GA6Uv5MC9Y/jKgYA6IOcqfKsh8ADdri+e9q4MAMEILHLzaJD7H9iD4objekUzMekLd05aU8da/pba7m5kGhHNI9AhiW5RW45oYRhfZXcqlW2G0LxjNROPmFl1m8ezIwJvVUjt138
+  template:
+    metadata:
+      creationTimestamp: null
+      name: nightingale-env-secret
+      namespace: nightingale
+    type: Opaque
 status: {}
