@@ -48,6 +48,8 @@ spec:
         - secretRef:
             name: nightingale-staging-env-secret
         - secretRef:
+            name: kube-pull
+        - secretRef:
             # This secret is created by KubeDB along with the db instance
             # The secret name follows the pattern {Postgres resource name}-auth
             name: nightingale-staging-database-auth
@@ -68,6 +70,8 @@ spec:
         envFrom:
         - configMapRef:
             name: nightingale-staging-env-config
+        - secretRef:
+            name: kube-pull
         - secretRef:
             # This secret is created by KubeDB along with the db instance
             # The secret name follows the pattern {Postgres resource name}-auth
@@ -154,9 +158,6 @@ data:
   APP_NAME: nightingale-staging
   POSTGRES_HOSTNAME: nightingale-staging-database
   PORT: "5000"
-  GOOGLE_CLIENT_ID: 55995190342-qsbknb0kvqe09b67vioa4s65nkimin66.apps.googleusercontent.com
-  ROLLBAR_CLIENT_TOKEN: 9dcc911480c04733bad28ba9d5aec852
-  ROLLBAR_ENV: prod
 kind: ConfigMap
 metadata:
   creationTimestamp:
@@ -166,32 +167,32 @@ metadata:
 apiVersion: bitnami.com/v1alpha1
 kind: SealedSecret
 metadata:
-  creationTimestamp:
-  name: nightingale-staging-env-secret
-  namespace: nightingale-staging
+  creationTimestamp: null
+  name: nightingale-s3-secret
+  namespace: nightingale
 spec:
   encryptedData:
-    SECRET_KEY_BASE: AgBWeSVHjxZaqRWI0ZbZJ/82Qv/gFVTIyI5/9TUn/+x7kXXHgDJVfCOfgSfoeVKtLSpHwgkoUn5xXzDO0t+8BWQvtsEvc/LvwJjuaRw0NdCOvLEPW/Ih14nUPpaeY4kCMjizEz3/le7coCT1jbV1qEZeRHUd8VZHk6hbeMbAHlXqIFOB40yz6SpcA4ZiluvB1ReDB06eFQYQnsYdIFjGMZj2jZN0iKfPuKnl/MAbjFrfrxYhY6JH3aLNMW0Y3bLkIg6hqyOeJIJ7cCWQ5p4XXA0tRJViVO+fjweCPnLyVDYXGtxTyW33EwmIOQihowXDTRYtF8HmI5ICZ3wPuaQway1K1PCie0f7JNgvU42TPCrNmHslShFl5DiInl3AGAUt4S+bkmYRmXaE1h6Wn9r5ng+qu2SewytohNnysjELapqYsMOv/q6JK428r2GzJJ/mRwkp8+7a/4wQ1IUMYMZ3ksLogO4Q9Qiq27uxjT43eIpm6mfC4Fdk76rwcxC4N0Cc6GJQnGl+tUedPbv7gcBnxgLcMPIQRUhrwWl9S+p2jM5X0bYuvM4xEkN9JlImrwWLw1nGlls9Z3+dFl036ml5ChtPytgVwvfKcITonw4ZUAq+66cd/FMFSwkVSCW98snXg1Y0Y1X1i2tFKdmmgYN8DahWtbuU9YTgUnU4AYd6bF1c3OlYviPwq4U6h0dU1FZ4AWS2Xr3RngAcg5B5/8JsVFb5E0u2qSN2RP59AtA1VOHl1z+8DZiHjn8JfuAYiWAGW4LaFCN4run5FxFe0cpfOTd6
+    AWS_ACCESS_KEY_ID: AgCHgN33e3kgzwWk6hZvvyijk9YrOuI/neicZl4hdsSQOMOoAYYjb6HaL3jbay8WtOkGVWUMSv/rXcOr4yqICygxm/gDc8v6E8tqLRlyKtP7LLN6OizmuqBw7lBw4div3OTv2k8HNPg8SGHPVcEyHFKEJRX7xfVpMeS2Qp4i/POa3rrTyQYlqoQM12JD5hsHf+C5vJbM9Ze+55cS8HE9Z0se/Af1qHkNc6LGyR32WEiGpk3FWCHAOpi9KSUPnoqNlFezmBsgIcneVA4W2xDuj5bfxqZq+tKt4fb+5kkOhKvVg3gM6AGTNbpVlc31+4S4qA5Xgk1wfjMv1KUKzQY5L//B8zKKl6WRlDfu3MSUFfUVTfHZmntvvLJ4a+zfAD9Cpp/uAR8tvr2rSQ7lCPlfoP6mL9jffHRGEMGEUI6+SUuZduLuAuxbVJpW5cUIMkG8zQOto4eEQZAuO6tz2PhNuQZsMpUlVGE+1CtrtI1/MAJFmnqfgCr+0VIcHm4+hG1qZnIF/tBmD0L/Kb4rR4T0acOquhGebJ7fsyIxBBEv39LImSwr0RQfEIDZ57qFBtk61y4GKRXkfvI9wlGkd2R8b2jUJUXiCFnSm8/du8SfLFzKObV9mP2KVIhDqrYST2o9Bk91QKGtDasgqLbi9U/8+wQD8CZcyRMqKVVgIDIIl96LkThxqbc4lIm1LgHxbyeZqACpGnTVp9tGjAIXbY9SB3AB6XiD6A==
+    AWS_SECRET_ACCESS_KEY: AgCce4wruhQeN5ikYXn/gJknzIUinC4pdkC7aUdcybYyd2iEdIhdS71sJ/BbXBKoTWLvjqVZFV0ABKR7msoq2n94hhjQg3V22vRYl5fXmOTgSfrhXEt94hImBvHEnU0k/tQ3Xp2NAGeUFEulPlXOPn/4JiMeqKKevLSA3y7gDndJ6ROZqjONaG81gYXS38nIPspaQ6ZzFaPlokPP8/lGtPdyxTCvE/sTei/QTfLloBdvxA1DjBsXsIuSME1gShyVjPq4nWMzF76dkL29hG6D56KmQ8q0BW2EamuBdiTJrQhHNYELZf2NAVfXDac+LgTD1L+P66404JTa9dAjEiWxX29QYrmTsmrv22Cq6MwaL7qcFlFZjjsUvRV+heok676WMY65VadUC1r6b/MO2dt9fFcimHSt6v5Ne3TPGHNCZdC+ivhvHY0fGEWG/ggsc/c1c5Eqhk2Ee6xjuxi69vDpuQxgsBP47dtbPjnLnK420MgcjdiXuVIw0dxx5xsv5N8YFUHTTrmAK6unkjOlCRMf/TAl1mqERJ/i2YprOjacsquttBQvLlUafU+xUcqcLeyky1ANgVtvlOwvpVFmQqxPLuiAriY9Ic7oISiPElUd171ULcDoxDd5BrZDaCwEO4hYSKt/0kJ0RtHgm5GHpejjOvtZz53eJZeoY1o43s3UCB+hn6SV1J86k5cfB1PrwvPaE6Z11ybUqa/g+BCee5hXVp5vgFiz66+kz7Gmn53N+hQmVUkOzwtiH8IE
   template:
     metadata:
-      creationTimestamp:
-      name: nightingale-staging-env-secret
-      namespace: nightingale-staging
+      name: nightingale-s3-secret
+      namespace: nightingale
+    type: Opaque
 ---
-# S3 credentials used for KubeDB snapshots
 apiVersion: bitnami.com/v1alpha1
 kind: SealedSecret
 metadata:
-  creationTimestamp:
-  name: nightingale-staging-s3-secret
+  creationTimestamp: null
+  name: kube-pull
   namespace: nightingale-staging
 spec:
   encryptedData:
-    AWS_ACCESS_KEY_ID: AgBZqq9BPK7pbMldGZYEMPB296xqU1gRxsZV7yfSR/3u+TiC42v9xqoW38cuNwxIu5a8v87TmK6bfKEozexVkdibstjQh6BGfTqJcQN6cAqQHRcLj9XMEQhC1vav4nrtZWHjNf2wla1GEzq/y6DbFrARdcM7mXsqc1ZMaJt4ePa8ukf4uXZ2ai99zSASF7+1f9b4gd2s8RaCZQ5+CXAkjvKgba/w6xQj4LqfkTQVVYmiUcd+yoJxjWNtvthbsXuMnRL0+s8NX6JnJsL0DocBAhKlNIS1iWXZppCdIq2MazKyr1e949x1U0YBp9HW60PHiUuvnP3EZCQUseK4dUL0PaLdmOFRUPWxsoBRk5YxFtUXjy2N192nc5WHP9hNgo1obXI40RoKQAWZLIOpbYs5OL/4BR+BbMEuTzr05f5w8JKFTVLz0mieyg4LPMSo7gnTKodT77NijrK7JOyfMtDQN1OQfti8JytnE2o/dGIBWw+guqupZb2/u7EVtnHcpaKzwM1PwNCyamlUjKakMKw5eprAWWEmFZ8vFktK3FpeaxBEY4Npn4okeZARYjM8W36bnZCd+hTfzyEWdfWqoEweUePnMDF2jx3Q2QqMSuR5vMDHlFQ4uLfC1J/oJRM88wbpXJv0sYQ4fd4SWNGcskZAAa5f+IEIcxWTBBqak4BcOd8W5wi+KYMHJ6gfKqWwOUYX8Pu9AYpWXxM4JzW+DQqTP2pmig/mJA==
-    AWS_SECRET_ACCESS_KEY: AgCjUR/i6dR5MLoDCNyBgjinLA0nM0j0lc5Kw3bbcJUBvHLrvhVKQBlZvu5Ip35jpdZ/YiXhXG691teEVnttluD5Qm6DW/XhbHDioOdt0pD6lM4hjhQ2bECKw5YH66SsJ6cK1Unkau8fQ/tMFqnA3934F0dgIJW10dcxVSQchngKYYGPoTmNkvi/6lwNHxiFTMUkkTpHJJ8ny7meMVV/zPngkLqBg4tYrPTwMJSZBA7i2dRg/ecifw3ReknvA1Bt+lCPfiysoOXkgGZqme/QfF8bUCLmZgefdDdHwmYZ1MebqL1CA7ycQE07vKau7Yd6tRh5DngL112IihCfEpCEKTPJEtdNF46i5CqbLMTY53csVxEWf0Yh9BJKzF7UKtgC3hhqA/BEQK4LZ/moHJoD3Bx3IgrKPvzgpUfld0TFgq1mzLEGqjMolEOh/ybT3ubLgwbAgxbHES2JSKedHIn67H3xSclp+7ZoOgen2T9hxSLqSEOjl1DR3fgv6wFoZ66XYSecWEW3PjETMAaL3wpYw3w5P2tDJohR9ZXZAr0VyD097QDWch7cGxdGPua2A2Fc5BUXKePlDCC4SgrgrJzdhedUC+Qz4c4b1EsgZkK1Jpch0v0BRc9MXpprx6trCkGeKN9kJod0Hv6FigVo1HlhN6ujO2+3ysJmHuPT4bxVNf7Pfa9n/gkOnCVyB3fcAc6u7XSCjEO8HuCwonqIq2viMdyn5zcnNR3G+DdfMeQ0AIJANskfCWdHiHVh
+    .dockerconfigjson: AgBpk/PmUHI9Pyx7+QLLpTT5JlETafRoBEErm+Loh4QG6sL9qgJzu4q4YED0Jw4FI9GbweI+YS7q38U1aLU0Vhg3MNZvQ4Zne49hdYGHR62+vqKoV1DAhqbjLBEnjUw01DSWPnrbNj9883lfz4EQwXD3ZqOTavnJ9v782j36VbJaY/QsQI9yg0akAhTRsYv85NwbNjh+XX2CPeZJoCGguXXZSZ+XdIeWwSoM/wSCEwYs3lo67VFKzxjIra5HikPykpkNrhWe8Lubh5ZyHlHDR7ut3DDqc8BUUZBtwWx8qBe+qpUeOiaXZINT2O+Or7iOcw0R5GPka7N+XyB7AcTeiSetHx4ZrCw3gCvXQ6gSoCeVNMfcTI7390kjOm9TTA2mbHGTc8UAjQRPEMINx1qz3pRU8WrqPy0Js/LuMt3C8MtMYl0G0Q+ONIoNtAE56JKQY0u1ykQDFBBOp3R4NtQNf+78Rtfa6+hhX5RHp1kd/H2T2wslCmZMpbZjsMouV7cEjpzVz4PeiGYUlTc9yaOWts396LaJySdaA9qGrkuY5BjiUoSbgHYbML9OesGZfnBcZmsSu1uugMs98wKIlWmYCVvoU5swfTgFTUDDDePaV5HcFF/7/pHOh2a8DZ16Bukzv990zNThpgOc2PZgatvbBisn3mXqdVDJmaQINeMYlifWlwE29VGFkjB7vDJt0GDayuuGNaFjaJOo+pHlywWJ3ELaTlwGJPRNVQoMteDpc2GlsAjE7M/sKOtLGoINZqIZWPzmtA9+5dX/rPWKmOYs9lZs00m5OcA+PxN5ZOKC4VdncM8PUuDHhLXnUgyidPi4Bzfu1VWwStyloUNvlCu6FLSh/9M0edcbBzPPblgOX5IJDfWZoFf81agqFwljI+n0jIy8aK3eQVvI/cJKOW5z7npxs0M3rWTbQkngshcxqliszNOmzpFU/aBlAn9+mLMrqn6IUET+j5NdYrqditMuHNTm
   template:
     metadata:
-      creationTimestamp:
-      name: nightingale-staging-s3-secret
+      creationTimestamp: null
+      name: kube-pull
       namespace: nightingale-staging
-    type: Opaque
+    type: kubernetes.io/dockerconfigjson
+status: {}
