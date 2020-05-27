@@ -24,7 +24,7 @@ metadata:
   namespace: nightingale-staging
   annotations:
     flux.weave.works/automated: "true"
-    flux.weave.works/tag.studio-pro: glob:master-*
+    flux.weave.works/tag.nightingale-server: glob:master-*
     flux.weave.works/tag.migrate: glob:master-*
     reloader.stakater.com/auto: "true"
 spec:
@@ -39,7 +39,7 @@ spec:
     spec:
       containers:
       - name: nightingale-staging
-        image: harbor.revelry-prod.revelry.net/library/studio-pro:develop-c030c6e
+        image: harbor.nightingale.revelry.org/library/nightingale-server:develop-c030c6e
         ports:
         - containerPort: 5000
         envFrom:
@@ -62,9 +62,9 @@ spec:
               fieldPath: status.podIP
       initContainers:
       - name: migrate
-        image: harbor.revelry-prod.revelry.net/library/studio-pro:master-ceb790f
-        command: ["./bin/studio_pro"]
-        args: ["eval", "StudioPro.ReleaseTasks.migrate()"]
+        image: harbor.nightingale.revelry.org/library/nightingale-server:master-ceb790f
+        command: ["./bin/nightingale"]
+        args: ["eval", "Nightingale.ReleaseTasks.migrate()"]
         envFrom:
         - configMapRef:
             name: nightingale-staging-env-config
