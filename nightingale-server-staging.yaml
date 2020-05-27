@@ -144,7 +144,7 @@ spec:
   terminationPolicy: DoNotTerminate
   backupSchedule:
     cronExpression: "@every 1h"
-    storageSecretName: nightingale-staging-s3-secret
+    storageSecretName: nightingale-s3-secret
     s3:
       endpoint: "s3.amazonaws.com"
       bucket: kubedb-revelry-prod
