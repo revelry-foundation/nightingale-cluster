@@ -92,3 +92,8 @@ spec:
       - namespace: '*'
         roles:
         - md-read-all-except-secrets
+    - group: "revelry-foundation:revelers"
+      bindTo: 
+      - namespace: '*'
+        roles:
+        - md-read-all-except-secrets
