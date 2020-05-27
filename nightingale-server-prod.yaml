@@ -64,7 +64,7 @@ spec:
               fieldPath: status.podIP
       initContainers:
       - name: migrate
-        image: harbor.nightingale.revelry.org/library/nightingale-server:master-ceb790f
+        image: harbor.nightingale.revelry.org/library/nightingale-server:master-latest
         command: ["./bin/nightingale"]
         args: ["eval", "Nightingale.ReleaseTasks.migrate()"]
         envFrom:
