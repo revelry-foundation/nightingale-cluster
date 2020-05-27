@@ -41,7 +41,7 @@ spec:
       - name: kube-pull
       containers:
       - name: nightingale
-        image: harbor.nightingale.revelry.org/library/nightingale:master-latest
+        image: harbor.nightingale.revelry.org/library/nightingale:master-42e9c75
         ports:
         - containerPort: 5000
         envFrom:
@@ -64,7 +64,7 @@ spec:
               fieldPath: status.podIP
       initContainers:
       - name: migrate
-        image: harbor.nightingale.revelry.org/library/nightingale:master-latest
+        image: harbor.nightingale.revelry.org/library/nightingale:master-42e9c75
         command: ["./bin/nightingale"]
         args: ["eval", "Nightingale.ReleaseTasks.migrate()"]
         envFrom:
@@ -165,7 +165,7 @@ metadata:
 apiVersion: bitnami.com/v1alpha1
 kind: SealedSecret
 metadata:
-  creationTimestamp: null
+  creationTimestamp:
   name: nightingale-s3-secret
   namespace: nightingale
 spec:
@@ -181,7 +181,7 @@ spec:
 apiVersion: bitnami.com/v1alpha1
 kind: SealedSecret
 metadata:
-  creationTimestamp: null
+  creationTimestamp:
   name: kube-pull
   namespace: nightingale
 spec:
@@ -189,7 +189,7 @@ spec:
     .dockerconfigjson: AgBLVPOVdMNUG30ArsZXmsdfRfud+mJSSCjxSyUna3n3b5KKvou7c7ozmFkd+JrAAzzcO7pZYDsItg4lr9KknfBi+VOTQzF8Es/9537mnGRJT4lgFiu45Y67J1HLW3IsmKrmevCzp+UzB8heM7RQ0O9RP5A7+P7FwNRtc+xEYGOu5E2HIDK2OhG0foMcK3Xm5Z+iQee/IWubm4qYTM3v8Ck2y42TTquDmSA3QN1CMbuzf0Bu4WuyX2MyLuzYl2gR3/0QHhLThvlEnP0QmLEHNtkSWiyeVIU5j/Oi26qdjQQHpnc0uAswPxrYminepnQlfI5Qpv5OFzjl/V8z7lUUahrsjtxF62QxDikR7OiPzb6KJXkxkUmloH0dKk5C5lXsiuu94/jWFCaKDAfHbs4yxgu+TfOwUH7m+OjeE2WEg+9/BmsxvDCzMhnZ+Log3l7RqdETB4v65SpPG8vvieNYtvMYDO+LI5EyAyTbX1jgZPBR9iT6tzbfiPZfOjUyGla6fss2G7ic5fZXLYvckFYLkPsNFKwNZnFWe7FfZ40ifgbZIf7iGKQSq+alGT7EzoOGFRp/ahkP3BXVQWpgkwIVpS60h/3wXgx9RgrA658CNG8pzTH6+ww2pQYGkN4d0Dv/NiCyVQyWEjWxCzTyxGEYI2UX6QSfOTber6vJed6scFRQmZnt3hauSSx75cuQR1tJqZ6vDyCeGN03hn9QcJtq1Gzlot5P+GZUMFUCMtJ8ZAcowxzSVBsXY3hiH4ijpsbDc1X8XUsx5qIFEDxBbXksEficuLpqMq26gO0GIH3k1mHBcs1lin3EzOTinIN8QI3CKn7P8PzDTyK5I8E3aomDzFum//TfQIpqEWsQJcARZq3mczDL+1sSjZ1Z4iqywdKtHDYYeF5tQKDD30C9REozdr5zbi+JrAysDmd/HwvVIkQSsgsH3UqryXuVP+5tlx7iaRAkHzyGEUd7QZgcS8cnKgAV
   template:
     metadata:
-      creationTimestamp: null
+      creationTimestamp:
       name: kube-pull
       namespace: nightingale
     type: kubernetes.io/dockerconfigjson

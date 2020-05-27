@@ -41,7 +41,7 @@ spec:
       - name: kube-pull
       containers:
       - name: nightingale-staging
-        image: harbor.nightingale.revelry.org/library/nightingale:master-latest
+        image: harbor.nightingale.revelry.org/library/nightingale:master-42e9c75
         ports:
         - containerPort: 5000
         envFrom:
@@ -64,7 +64,7 @@ spec:
               fieldPath: status.podIP
       initContainers:
       - name: migrate
-        image: harbor.nightingale.revelry.org/library/nightingale:master-latest
+        image: harbor.nightingale.revelry.org/library/nightingale:master-42e9c75
         command: ["./bin/nightingale"]
         args: ["eval", "Nightingale.ReleaseTasks.migrate()"]
         envFrom:
@@ -173,7 +173,7 @@ spec:
     AWS_SECRET_ACCESS_KEY: AgBxQaZPOExUhsvF4QIeXnJU53xOSs3/H9kfewaVto6dj73/SbNTjcXCmujNL4XzKoIAPctfzp57CKMP09aJmESxUqo3xtIkQgGN+qBovn7pAhcoRDYpnyOhzEpwmEMsFQeRMyAVzTWpM7sLG4SpXolhHHr3R7nbBo77X8KEo3lmv9YaSQgijLU/UeF4W6dkeU17vz7iuGc5ylj0IKitVWY42m/kj9zkkjAwG0tfBpiH1QBXg5OayWgwNuosatXcTth8GILRdtdSQo/C/7AChFjr/pkqi3UAUMWWW9y+lKFHxZuVaTiWamd5ivrCM88UGpcMsL3/+1bfGrjSJozh4KLQwGIX/XI52Wwn0QHqLg1MfNn2J/WDXgNJ5DlMHttRkRVZP06fl4IjJbK2sJU3b1PgO6/MEBIxq4GLifMpMsBbgDBjTOSBOWkOdfOkmyOZBmnLx5sDjORjOs3y7iD6V7NR9k/2L2gvP3AFGvS4Elk19EQkehnkNGQjvomqIfsCCo3ojbuEfuz4d/CWYkGbDy2EvvwLwf+usvu5QjuFA9wkycxijvFQM/q0j81/uBW1flc1CybRXbYyW1ChFKJbdZ/Am+K7JAxum4wbOJdbbGiIQHQve8qLsMIy050qhvMMF3EIeo8SJ87jfOD6t4quGnXiEl5LLNrkpZ3tKMQAj6dm6OJ3YlYTmxo7tL9rbdVg5OS58p6trSh6/dvGDTP1vzvtCYlobSb18Ng5diyFm2qZrJzFcQRbO8NE
   template:
     metadata:
-      creationTimestamp: null
+      creationTimestamp:
       name: nightingale-staging-s3-secret
       namespace: nightingale-staging
     type: Opaque
@@ -181,7 +181,7 @@ spec:
 apiVersion: bitnami.com/v1alpha1
 kind: SealedSecret
 metadata:
-  creationTimestamp: null
+  creationTimestamp:
   name: kube-pull
   namespace: nightingale-staging
 spec:
@@ -189,7 +189,7 @@ spec:
     .dockerconfigjson: AgBpk/PmUHI9Pyx7+QLLpTT5JlETafRoBEErm+Loh4QG6sL9qgJzu4q4YED0Jw4FI9GbweI+YS7q38U1aLU0Vhg3MNZvQ4Zne49hdYGHR62+vqKoV1DAhqbjLBEnjUw01DSWPnrbNj9883lfz4EQwXD3ZqOTavnJ9v782j36VbJaY/QsQI9yg0akAhTRsYv85NwbNjh+XX2CPeZJoCGguXXZSZ+XdIeWwSoM/wSCEwYs3lo67VFKzxjIra5HikPykpkNrhWe8Lubh5ZyHlHDR7ut3DDqc8BUUZBtwWx8qBe+qpUeOiaXZINT2O+Or7iOcw0R5GPka7N+XyB7AcTeiSetHx4ZrCw3gCvXQ6gSoCeVNMfcTI7390kjOm9TTA2mbHGTc8UAjQRPEMINx1qz3pRU8WrqPy0Js/LuMt3C8MtMYl0G0Q+ONIoNtAE56JKQY0u1ykQDFBBOp3R4NtQNf+78Rtfa6+hhX5RHp1kd/H2T2wslCmZMpbZjsMouV7cEjpzVz4PeiGYUlTc9yaOWts396LaJySdaA9qGrkuY5BjiUoSbgHYbML9OesGZfnBcZmsSu1uugMs98wKIlWmYCVvoU5swfTgFTUDDDePaV5HcFF/7/pHOh2a8DZ16Bukzv990zNThpgOc2PZgatvbBisn3mXqdVDJmaQINeMYlifWlwE29VGFkjB7vDJt0GDayuuGNaFjaJOo+pHlywWJ3ELaTlwGJPRNVQoMteDpc2GlsAjE7M/sKOtLGoINZqIZWPzmtA9+5dX/rPWKmOYs9lZs00m5OcA+PxN5ZOKC4VdncM8PUuDHhLXnUgyidPi4Bzfu1VWwStyloUNvlCu6FLSh/9M0edcbBzPPblgOX5IJDfWZoFf81agqFwljI+n0jIy8aK3eQVvI/cJKOW5z7npxs0M3rWTbQkngshcxqliszNOmzpFU/aBlAn9+mLMrqn6IUET+j5NdYrqditMuHNTm
   template:
     metadata:
-      creationTimestamp: null
+      creationTimestamp:
       name: kube-pull
       namespace: nightingale-staging
     type: kubernetes.io/dockerconfigjson
