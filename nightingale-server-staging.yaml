@@ -1,0 +1,196 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nightingale-staging
+---
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: default-mem-limits
+  namespace: nightingale-staging
+spec:
+  limits:
+  - default:
+      memory: 512Mi
+    defaultRequest:
+      memory: 512Mi
+    type: Container
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nightingale-staging
+  namespace: nightingale-staging
+  annotations:
+    flux.weave.works/automated: "true"
+    flux.weave.works/tag.nightingale-server: glob:master-*
+    flux.weave.works/tag.migrate: glob:master-*
+    reloader.stakater.com/auto: "true"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nightingale-staging
+  template:
+    metadata:
+      labels:
+        app: nightingale-staging
+    spec:
+      imagePullSecrets:
+      - name: kube-pull
+      containers:
+      - name: nightingale-staging
+        image: harbor.nightingale.revelry.org/library/nightingale-server:master-latest
+        ports:
+        - containerPort: 5000
+        envFrom:
+        - configMapRef:
+            name: nightingale-staging-env-config
+        - secretRef:
+            name: nightingale-staging-env-secret
+        - secretRef:
+            # This secret is created by KubeDB along with the db instance
+            # The secret name follows the pattern {Postgres resource name}-auth
+            name: nightingale-staging-database-auth
+        env:
+        # distributed elixir via libcluster
+        - name: CLUSTER_ENABLED
+          value: "1"
+        # let each instance know its own IP for distributed elixir
+        - name: NODE_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+      initContainers:
+      - name: migrate
+        image: harbor.nightingale.revelry.org/library/nightingale-server:master-latest
+        command: ["./bin/nightingale"]
+        args: ["eval", "Nightingale.ReleaseTasks.migrate()"]
+        envFrom:
+        - configMapRef:
+            name: nightingale-staging-env-config
+        - secretRef:
+            # This secret is created by KubeDB along with the db instance
+            # The secret name follows the pattern {Postgres resource name}-auth
+            name: nightingale-staging-database-auth
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nightingale-staging
+  namespace: nightingale-staging
+spec:
+  selector:
+    app: nightingale-staging
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 5000
+---
+# This 'headless service' lets app nodes discover one another through DNS
+# enabling distributed elixir features
+apiVersion: v1
+kind: Service
+metadata:
+  name: nightingale-staging-nodes
+  namespace: nightingale-staging
+spec:
+  clusterIP: None
+  selector:
+    app: nightingale-staging
+  ports:
+  - name: epmd
+    port: 4369
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: nightingale-staging
+  namespace: nightingale-staging
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    certmanager.k8s.io/cluster-issuer: letsencrypt-production
+spec:
+  rules:
+  - host: nightingale-server-staging.nightingale.revelry.org
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: nightingale-staging
+          servicePort: 80
+  tls:
+  - hosts:
+    - nightingale-server-staging.nightingale.revelry.org
+    secretName: nightingale-staging-cert
+---
+apiVersion: kubedb.com/v1alpha1
+kind: Postgres
+metadata:
+  name: nightingale-staging-database
+  namespace: nightingale-staging
+spec:
+  version: "11.2"
+  storageType: Durable
+  storage:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
+  terminationPolicy: DoNotTerminate
+  backupSchedule:
+    cronExpression: "@every 1h"
+    storageSecretName: nightingale-s3-secret
+    s3:
+      endpoint: "s3.amazonaws.com"
+      bucket: rev-nightingale-kubedb
+      prefix: nightingale-staging
+---
+apiVersion: v1
+data:
+  # used for url helpers and socket security checks
+  APP_DOMAIN: nightingale-server-staging.nightingale.revelry.org
+  # should match the 'app:' label in the deployment
+  APP_NAME: nightingale-staging
+  POSTGRES_HOSTNAME: nightingale-staging-database
+  PORT: "5000"
+kind: ConfigMap
+metadata:
+  creationTimestamp:
+  name: nightingale-staging-env-config
+  namespace: nightingale-staging
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  creationTimestamp: null
+  name: nightingale-s3-secret
+  namespace: nightingale
+spec:
+  encryptedData:
+    AWS_ACCESS_KEY_ID: AgCHgN33e3kgzwWk6hZvvyijk9YrOuI/neicZl4hdsSQOMOoAYYjb6HaL3jbay8WtOkGVWUMSv/rXcOr4yqICygxm/gDc8v6E8tqLRlyKtP7LLN6OizmuqBw7lBw4div3OTv2k8HNPg8SGHPVcEyHFKEJRX7xfVpMeS2Qp4i/POa3rrTyQYlqoQM12JD5hsHf+C5vJbM9Ze+55cS8HE9Z0se/Af1qHkNc6LGyR32WEiGpk3FWCHAOpi9KSUPnoqNlFezmBsgIcneVA4W2xDuj5bfxqZq+tKt4fb+5kkOhKvVg3gM6AGTNbpVlc31+4S4qA5Xgk1wfjMv1KUKzQY5L//B8zKKl6WRlDfu3MSUFfUVTfHZmntvvLJ4a+zfAD9Cpp/uAR8tvr2rSQ7lCPlfoP6mL9jffHRGEMGEUI6+SUuZduLuAuxbVJpW5cUIMkG8zQOto4eEQZAuO6tz2PhNuQZsMpUlVGE+1CtrtI1/MAJFmnqfgCr+0VIcHm4+hG1qZnIF/tBmD0L/Kb4rR4T0acOquhGebJ7fsyIxBBEv39LImSwr0RQfEIDZ57qFBtk61y4GKRXkfvI9wlGkd2R8b2jUJUXiCFnSm8/du8SfLFzKObV9mP2KVIhDqrYST2o9Bk91QKGtDasgqLbi9U/8+wQD8CZcyRMqKVVgIDIIl96LkThxqbc4lIm1LgHxbyeZqACpGnTVp9tGjAIXbY9SB3AB6XiD6A==
+    AWS_SECRET_ACCESS_KEY: AgCce4wruhQeN5ikYXn/gJknzIUinC4pdkC7aUdcybYyd2iEdIhdS71sJ/BbXBKoTWLvjqVZFV0ABKR7msoq2n94hhjQg3V22vRYl5fXmOTgSfrhXEt94hImBvHEnU0k/tQ3Xp2NAGeUFEulPlXOPn/4JiMeqKKevLSA3y7gDndJ6ROZqjONaG81gYXS38nIPspaQ6ZzFaPlokPP8/lGtPdyxTCvE/sTei/QTfLloBdvxA1DjBsXsIuSME1gShyVjPq4nWMzF76dkL29hG6D56KmQ8q0BW2EamuBdiTJrQhHNYELZf2NAVfXDac+LgTD1L+P66404JTa9dAjEiWxX29QYrmTsmrv22Cq6MwaL7qcFlFZjjsUvRV+heok676WMY65VadUC1r6b/MO2dt9fFcimHSt6v5Ne3TPGHNCZdC+ivhvHY0fGEWG/ggsc/c1c5Eqhk2Ee6xjuxi69vDpuQxgsBP47dtbPjnLnK420MgcjdiXuVIw0dxx5xsv5N8YFUHTTrmAK6unkjOlCRMf/TAl1mqERJ/i2YprOjacsquttBQvLlUafU+xUcqcLeyky1ANgVtvlOwvpVFmQqxPLuiAriY9Ic7oISiPElUd171ULcDoxDd5BrZDaCwEO4hYSKt/0kJ0RtHgm5GHpejjOvtZz53eJZeoY1o43s3UCB+hn6SV1J86k5cfB1PrwvPaE6Z11ybUqa/g+BCee5hXVp5vgFiz66+kz7Gmn53N+hQmVUkOzwtiH8IE
+  template:
+    metadata:
+      name: nightingale-s3-secret
+      namespace: nightingale
+    type: Opaque
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  creationTimestamp: null
+  name: kube-pull
+  namespace: nightingale-staging
+spec:
+  encryptedData:
+    .dockerconfigjson: AgBpk/PmUHI9Pyx7+QLLpTT5JlETafRoBEErm+Loh4QG6sL9qgJzu4q4YED0Jw4FI9GbweI+YS7q38U1aLU0Vhg3MNZvQ4Zne49hdYGHR62+vqKoV1DAhqbjLBEnjUw01DSWPnrbNj9883lfz4EQwXD3ZqOTavnJ9v782j36VbJaY/QsQI9yg0akAhTRsYv85NwbNjh+XX2CPeZJoCGguXXZSZ+XdIeWwSoM/wSCEwYs3lo67VFKzxjIra5HikPykpkNrhWe8Lubh5ZyHlHDR7ut3DDqc8BUUZBtwWx8qBe+qpUeOiaXZINT2O+Or7iOcw0R5GPka7N+XyB7AcTeiSetHx4ZrCw3gCvXQ6gSoCeVNMfcTI7390kjOm9TTA2mbHGTc8UAjQRPEMINx1qz3pRU8WrqPy0Js/LuMt3C8MtMYl0G0Q+ONIoNtAE56JKQY0u1ykQDFBBOp3R4NtQNf+78Rtfa6+hhX5RHp1kd/H2T2wslCmZMpbZjsMouV7cEjpzVz4PeiGYUlTc9yaOWts396LaJySdaA9qGrkuY5BjiUoSbgHYbML9OesGZfnBcZmsSu1uugMs98wKIlWmYCVvoU5swfTgFTUDDDePaV5HcFF/7/pHOh2a8DZ16Bukzv990zNThpgOc2PZgatvbBisn3mXqdVDJmaQINeMYlifWlwE29VGFkjB7vDJt0GDayuuGNaFjaJOo+pHlywWJ3ELaTlwGJPRNVQoMteDpc2GlsAjE7M/sKOtLGoINZqIZWPzmtA9+5dX/rPWKmOYs9lZs00m5OcA+PxN5ZOKC4VdncM8PUuDHhLXnUgyidPi4Bzfu1VWwStyloUNvlCu6FLSh/9M0edcbBzPPblgOX5IJDfWZoFf81agqFwljI+n0jIy8aK3eQVvI/cJKOW5z7npxs0M3rWTbQkngshcxqliszNOmzpFU/aBlAn9+mLMrqn6IUET+j5NdYrqditMuHNTm
+  template:
+    metadata:
+      creationTimestamp: null
+      name: kube-pull
+      namespace: nightingale-staging
+    type: kubernetes.io/dockerconfigjson
+status: {}
