@@ -41,7 +41,7 @@ spec:
       - name: kube-pull
       containers:
       - name: nightingale-staging
-        image: harbor.nightingale.revelry.org/library/nightingale-server:develop-c030c6e
+        image: harbor.nightingale.revelry.org/library/nightingale-server:master-latest
         ports:
         - containerPort: 5000
         envFrom:
