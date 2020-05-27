@@ -37,6 +37,8 @@ spec:
       labels:
         app: nightingale-staging
     spec:
+      imagePullSecrets:
+      - name: kube-pull
       containers:
       - name: nightingale-staging
         image: harbor.nightingale.revelry.org/library/nightingale-server:develop-c030c6e
@@ -47,8 +49,6 @@ spec:
             name: nightingale-staging-env-config
         - secretRef:
             name: nightingale-staging-env-secret
-        - secretRef:
-            name: kube-pull
         - secretRef:
             # This secret is created by KubeDB along with the db instance
             # The secret name follows the pattern {Postgres resource name}-auth
@@ -70,8 +70,6 @@ spec:
         envFrom:
         - configMapRef:
             name: nightingale-staging-env-config
-        - secretRef:
-            name: kube-pull
         - secretRef:
             # This secret is created by KubeDB along with the db instance
             # The secret name follows the pattern {Postgres resource name}-auth
@@ -147,7 +145,7 @@ spec:
     storageSecretName: nightingale-s3-secret
     s3:
       endpoint: "s3.amazonaws.com"
-      bucket: kubedb-revelry-prod
+      bucket: rev-nightingale-kubedb
       prefix: nightingale-staging
 ---
 apiVersion: v1
