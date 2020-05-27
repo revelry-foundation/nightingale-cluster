@@ -17,3 +17,4 @@ spec:
       url: "ssh://git@github.com/revelry-foundation/nightingale-cluster"
       branch: master
       secretName: flux-git-deploy
+      pollInterval: 1m
