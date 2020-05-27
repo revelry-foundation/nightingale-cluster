@@ -41,7 +41,7 @@ spec:
       - name: kube-pull
       containers:
       - name: nightingale
-        image: harbor.nightingale.revelry.org/library/nightingale:master-42e9c75
+        image: harbor.nightingale.revelry.org/library/nightingale:master-425dc6d
         ports:
         - containerPort: 5000
         envFrom:
@@ -64,7 +64,7 @@ spec:
               fieldPath: status.podIP
       initContainers:
       - name: migrate
-        image: harbor.nightingale.revelry.org/library/nightingale:master-42e9c75
+        image: harbor.nightingale.revelry.org/library/nightingale:master-425dc6d
         command: ["./bin/nightingale"]
         args: ["eval", "Nightingale.ReleaseTasks.migrate()"]
         envFrom:
@@ -200,7 +200,7 @@ status: {}
 apiVersion: bitnami.com/v1alpha1
 kind: SealedSecret
 metadata:
-  creationTimestamp: null
+  creationTimestamp:
   name: nightingale-env-secret
   namespace: nightingale
 spec:
@@ -208,7 +208,7 @@ spec:
     SECRET_KEY_BASE: AgBCATi/bvkxAtnmcT46Cuh/uBH5/sf0ZZMGRsso+YOdjRzS8d486lHzULRusKgicLcO3mnvk367jbG+7l5sHpKtSaCs3HMj4EFmyvCsh5QbI5XUUmP4K0V5NOFJcufs3ScRcmz3DUWwxjjcYNN7K63D7b2o4yx7Lk4TX8YxsYlrk4t6FNe3t1d8lB7CeAsdfp4GkIZLcqk8rrFBhpYP7S8kA/tTp8+UOFwSoZ+PNzWR8wWFaw1CG/AF4gX13VZ0l/tgiD0iLpqg0IR7J4YpE/BTbl/qEnRVjrfAExAV+9sajvdQ+26sUz7bhMRDmU6GRarD3W/y7TgRhIskvoSo0hRx59FTUVECMMHrvExXihDfm0oHp2Z/8GIYbBcDZGVJ45RADLpuyJXq8X7M/+N0DWHejqDjAyIx0wnqqJ47tC+u79CRhQ5+WFr0zEAMaA8bY+Z/HMEYZt7TodTS44TDQ6NjQKhS4O9eEHamDteiRS7yn7VzePq+2f9bJ+6zEJhEAOGnFKroucssIVkeQm21J74k0U8Z9HI0r0lea/gCBe0xCOaKZNZ/shZPey1SyKDgMPkn290GKIU3LlCRK20aLAPudhyBZJrHbm6b3gIpCAE52///vop9wv+2xLyv7clv22+x7YcTNWJShuQE4ZU+ibITNtwr00/CxUP/n6vaCO1X1lE95scOMtG95MduGQ1YpZmvThBFwAs9yrVbahlM64ltensioAxG9M0G+BsqRGaAlr6371PD9k4fC0Sb2AnQFQMSurHMBozErt7XA2tosDKS
   template:
     metadata:
-      creationTimestamp: null
+      creationTimestamp:
       name: nightingale-env-secret
       namespace: nightingale
     type: Opaque
