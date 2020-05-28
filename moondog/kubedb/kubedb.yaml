@@ -38,3 +38,19 @@ spec:
     name: kubedb-catalog
     version: v0.12.0
   values: {}
+---
+apiVersion: catalog.kubedb.com/v1alpha1
+kind: PostgresVersion
+metadata:
+  name: postgis-10.2
+spec:
+  version: "10.2"
+  db:
+    image: abkfenris/kubedb-postgis:10.2
+  exporter:
+    image: kubedb/postgres_exporter:v0.4.6
+  tools:
+    image: kubedb/postgres-tools:10.2-v2
+  podSecurityPolicies:
+    databasePolicyName: "postgres-db"
+    snapshotterPolicyName: "postgres-snapshot"
