@@ -127,6 +127,29 @@ spec:
     - nightingale-server.nightingale.revelry.org
     secretName: nightingale-cert
 ---
+apiVersion: kubedb.com/v1alpha1
+kind: Postgres
+metadata:
+  name: nightingale-database
+  namespace: nightingale
+spec:
+  version: "postgis-10.2"
+  storageType: Durable
+  storage:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
+  terminationPolicy: DoNotTerminate
+  backupSchedule:
+    cronExpression: "@every 1h"
+    storageSecretName: nightingale-s3-secret
+    s3:
+      endpoint: "s3.amazonaws.com"
+      bucket: rev-nightingale-kubedb
+      prefix: nightingale
+---
 apiVersion: v1
 data:
   # used for url helpers and socket security checks
