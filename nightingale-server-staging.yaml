@@ -141,7 +141,7 @@ spec:
     resources:
       requests:
         storage: 1Gi
-  terminationPolicy: DoNotTerminate
+  terminationPolicy: WipeOut
   backupSchedule:
     cronExpression: "@every 1h"
     storageSecretName: nightingale-staging-s3-secret
