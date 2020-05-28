@@ -127,29 +127,6 @@ spec:
     - nightingale-server-staging.nightingale.revelry.org
     secretName: nightingale-staging-cert
 ---
-apiVersion: kubedb.com/v1alpha1
-kind: Postgres
-metadata:
-  name: nightingale-staging-database
-  namespace: nightingale-staging
-spec:
-  version: "11.2"
-  storageType: Durable
-  storage:
-    accessModes:
-    - ReadWriteOnce
-    resources:
-      requests:
-        storage: 1Gi
-  terminationPolicy: WipeOut
-  backupSchedule:
-    cronExpression: "@every 1h"
-    storageSecretName: nightingale-staging-s3-secret
-    s3:
-      endpoint: "s3.amazonaws.com"
-      bucket: rev-nightingale-kubedb
-      prefix: nightingale-staging
----
 apiVersion: v1
 data:
   # used for url helpers and socket security checks
