@@ -41,7 +41,7 @@ spec:
       - name: kube-pull
       containers:
       - name: nightingale
-        image: harbor.nightingale.revelry.org/library/nightingale:master-f85ff31
+        image: harbor.nightingale.revelry.org/library/nightingale:master-616d20e
         ports:
         - containerPort: 5000
         envFrom:
@@ -64,7 +64,7 @@ spec:
               fieldPath: status.podIP
       initContainers:
       - name: migrate
-        image: harbor.nightingale.revelry.org/library/nightingale:master-f85ff31
+        image: harbor.nightingale.revelry.org/library/nightingale:master-616d20e
         command: ["./bin/nightingale"]
         args: ["eval", "Nightingale.ReleaseTasks.migrate()"]
         envFrom:
