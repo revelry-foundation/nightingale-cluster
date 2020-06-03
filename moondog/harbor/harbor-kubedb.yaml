@@ -1,54 +1,54 @@
-# ---
-# # Source: moondog/templates/harbor/harbor-kubedb.yaml
-# apiVersion: kubedb.com/v1alpha1
-# kind: Postgres
-# metadata:
-#   name: harbor-pg
-#   namespace: md-harbor
-# spec:
-#   version: "10.6"
-#   replicas: 2
-#   standbyMode: Hot
-#   streamingMode: asynchronous
-#   storageType: "Durable"
-#   databaseSecret:
-#     secretName: harbor-db-auth
-#   storage:
-#     storageClassName: aws-ebs-gp2
-#     accessModes:
-#       - ReadWriteOnce
-#     resources:
-#       requests:
-#         storage: 1G
-#   init:
-#     scriptSource:
-#       configMap:
-#         name: harbor-init-sql
-#   backupSchedule:
-#     cronExpression: "@every 30m"
-#     storageSecretName: s3-credentials
-#     s3:
-#       endpoint: "s3.amazonaws.com"
-#       bucket: "rev-nightingale-kubedb"
-#       prefix: harbor-pg
-#     podTemplate:
-#       spec:
-#         resources:
-#           requests:
-#             cpu: 100m
-#             memory: 256M
-#           limits:
-#             cpu: 500m
-#             memory: 1G
-#   podTemplate:
-#     spec:
-#       resources:
-#         requests:
-#           memory: 256M
-#           cpu: 250m
-#         limits:
-#           memory: 512M
-#           cpu: 1000m
-#   updateStrategy:
-#     type: RollingUpdate
-#   terminationPolicy: Pause
+---
+# Source: moondog/templates/harbor/harbor-kubedb.yaml
+apiVersion: kubedb.com/v1alpha1
+kind: Postgres
+metadata:
+  name: harbor-pg
+  namespace: md-harbor
+spec:
+  version: "10.6"
+  replicas: 2
+  standbyMode: Hot
+  streamingMode: asynchronous
+  storageType: "Durable"
+  databaseSecret:
+    secretName: harbor-db-auth
+  storage:
+    storageClassName: aws-ebs-gp2
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 10G
+  # init:
+  #   scriptSource:
+  #     configMap:
+  #       name: harbor-init-sql
+  backupSchedule:
+    cronExpression: "@every 30m"
+    storageSecretName: s3-credentials
+    s3:
+      endpoint: "s3.amazonaws.com"
+      bucket: "rev-nightingale-kubedb"
+      prefix: harbor-pg
+    podTemplate:
+      spec:
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256M
+          limits:
+            cpu: 500m
+            memory: 1G
+  podTemplate:
+    spec:
+      resources:
+        requests:
+          memory: 256M
+          cpu: 250m
+        limits:
+          memory: 512M
+          cpu: 1000m
+  updateStrategy:
+    type: RollingUpdate
+  terminationPolicy: Pause
