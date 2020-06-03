@@ -20,10 +20,6 @@ spec:
     resources:
       requests:
         storage: 10G
-  # init:
-  #   scriptSource:
-  #     configMap:
-  #       name: harbor-init-sql
   backupSchedule:
     cronExpression: "@every 30m"
     storageSecretName: s3-credentials
