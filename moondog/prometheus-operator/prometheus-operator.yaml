@@ -34,11 +34,15 @@ spec:
           auth_url: https://dex.nightingale.revelry.org/auth
           token_url: http://md-dex.md-dex.svc:32000/token
           api_url:
+        users:
+          viewers_can_edit: true
       ingress:
         enabled: true
         annotations:
           kubernetes.io/ingress.class: nginx
           cert-manager.io/cluster-issuer: "letsencrypt"
+          nginx.ingress.kubernetes.io/auth-url: "https://oauth2-proxy.nightingale.revelry.org/oauth2/auth"
+          nginx.ingress.kubernetes.io/auth-signin: "https://oauth2-proxy.nightingale.revelry.org/oauth2/start?rd=$scheme://$best_http_host$request_uri"
         hosts:
           - grafana.nightingale.revelry.org
         path: /
