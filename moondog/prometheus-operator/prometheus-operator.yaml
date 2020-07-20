@@ -62,7 +62,7 @@ spec:
     alertmanager:
       config:
         global:
-          slack_api_url: "https://hooks.slack.com/services/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"
+          slack_api_url: "https://hooks.slack.com/services/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"
         route:
           receiver: "slack"
           routes:
