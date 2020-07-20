@@ -62,7 +62,7 @@ spec:
     alertmanager:
       config:
         global:
-          slack_api_url: "https://hooks.slack.com/services/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"
+          slack_api_url: "https://hooks.slack.com/services/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"
         route:
           receiver: "slack"
           routes:
@@ -83,6 +83,7 @@ spec:
                     {{ range .Labels.SortedPairs }} • *{{ .Name }}:* `{{ .Value }}`
                     {{ end }}
                   {{ end }}
+
       ingress:
         enabled: true
         annotations:
