@@ -11,7 +11,7 @@ spec:
   chart:
     repository: https://kubernetes-charts.storage.googleapis.com/
     name: prometheus-operator
-    version: 9.1.0
+    version: 8.12.13
   valuesFrom:
     - secretKeyRef:
         name: values-yaml
